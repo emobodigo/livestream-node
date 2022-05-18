@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Room {
+  room_id      Int        @id @default(autoincrement())
+  room_name    String
+  host         User       @relation(fields: [host_id], references: [user_id])
+  host_id      Int
+  live_status  Int        @default(0)
+  file_path    String     @default("")
+  Messages     Messages[]
+  count_viewer Int        @default(0)
+  count_like   Int        @default(0)
+  createdAt    DateTime   @default(now())
+}
+
+model User {
+  user_id  Int        @id @default(autoincrement())
+  username String
+  Room     Room[]
+  Messages Messages[]
+}
+
+model Messages {
+  message_id Int    @id @default(autoincrement())
+  messages   String @db.Text
+  user       User   @relation(fields: [user_id], references: [user_id])
+  user_id    Int
+  room       Room   @relation(fields: [room_id], references: [room_id])
+  room_id    Int
+}
